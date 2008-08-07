@@ -1,19 +1,20 @@
 <?php
 
-$plugin['name'] = 'cnk_versioning';
-$plugin['version'] = '0.1.6';
-$plugin['author'] = 'Christian Nowak';
-$plugin['author_uri'] = 'http://www.cnowak.de';
-$plugin['description'] = 'Autoload Templates';
-
-$plugin['type'] = '3';
+$plugin=array(
+'name'=>'cnk_versioning',
+'version'=>'0.1.6',
+'author'=>'Christian Nowak',
+'author_uri'=>'http://www.cnowak.de',
+'description'=>'Autoload Templates',
+'type'=>'3',
+);
 
 @include_once('zem_tpl.php');
 
 # --- BEGIN PLUGIN CODE ---
 global $CNK_VER_OUTPUT_PATH, $CNK_VER_EXT, $CNK_VER_EXT_CSS;
 
-$CNK_VER_OUTPUT_PATH = 'textpattern/_templates/versioning/'; //e.g. 'textpattern/_templates/versioning/'
+$CNK_VER_OUTPUT_PATH = 'textpattern/_templates/versioning/';
 $CNK_VER_EXT = 'txp';
 $CNK_VER_EXT_CSS = 'css';
 
