@@ -22,7 +22,7 @@ $CNK_VER_EXT_CSS = 'css';
 	DO NOT EDIT BELOW THIS LINE!
 */
 
-$CNK_VER_OUTPUT_PATH = trim($CNK_VER_OUTPUT_PATH, '/' ) . ($CNK_VER_OUTPUT_PATH? '/' : '');
+$CNK_VER_OUTPUT_PATH = trim($CNK_VER_OUTPUT_PATH, DS ) . ($CNK_VER_OUTPUT_PATH ? DS : '');
 
 if(@txpinterface == 'admin') 
 {
@@ -47,9 +47,9 @@ function cnk_ver_textpattern()
 		$error = false;
 		
 		// read all files
-		$forms = glob($CNK_VER_OUTPUT_PATH.'forms/*.'.$CNK_VER_EXT);
-		$pages = glob($CNK_VER_OUTPUT_PATH.'pages/*.'.$CNK_VER_EXT);
-		$css = glob($CNK_VER_OUTPUT_PATH.'css/*.'.$CNK_VER_EXT_CSS);
+		$forms = glob($CNK_VER_OUTPUT_PATH.'forms'.DS.'*.'.$CNK_VER_EXT);
+		$pages = glob($CNK_VER_OUTPUT_PATH.'pages'.DS.'*.'.$CNK_VER_EXT);
+		$css = glob($CNK_VER_OUTPUT_PATH.'css'.DS.'*.'.$CNK_VER_EXT_CSS);
 		
 		if ($forms !== false) $error = !cnk_ver_push_forms($forms);
 		if ($pages !== false) $error = !cnk_ver_push_pages($pages);
@@ -69,7 +69,7 @@ function cnk_ver_push_forms($form_files)
 	
 	while ($rs && $r = nextRow($rs))
 	{
-		$forms[$CNK_VER_OUTPUT_PATH.'forms/'.$r['name'].'.'.$r['type'].'.'.$CNK_VER_EXT] = $r['mod_time'];
+		$forms[$CNK_VER_OUTPUT_PATH.'forms'.DS.$r['name'].'.'.$r['type'].'.'.$CNK_VER_EXT] = $r['mod_time'];
 	}
 	
 	for ($i=0; $i < count($form_files); $i++)
@@ -131,7 +131,7 @@ function cnk_ver_push_pages($page_files)
 	
 	while ($rs && $r = nextRow($rs))
 	{
-		$pages[$CNK_VER_OUTPUT_PATH.'pages/'.$r['name'].'.'.$CNK_VER_EXT] = $r['mod_time'];
+		$pages[$CNK_VER_OUTPUT_PATH.'pages'.DS.$r['name'].'.'.$CNK_VER_EXT] = $r['mod_time'];
 	}
 	
 	for ($i=0; $i < count($page_files); $i++)
@@ -188,7 +188,7 @@ function cnk_ver_push_css($css_files)
 	
 	while ($rs && $r = nextRow($rs))
 	{
-		$css[$CNK_VER_OUTPUT_PATH.'css/'.$r['name'].'.'.$CNK_VER_EXT_CSS] = $r['mod_time'];
+		$css[$CNK_VER_OUTPUT_PATH.'css'.DS.$r['name'].'.'.$CNK_VER_EXT_CSS] = $r['mod_time'];
 	}
 	
 	for ($i=0; $i < count($css_files); $i++)
@@ -292,24 +292,24 @@ function cnk_ver_pull_all()
 	
 	echo '<div style="margin: auto; text-align: center">';
 				
-	if (gps('do_pull') || (glob('../'.$CNK_VER_OUTPUT_PATH.'pages/*.'.$CNK_VER_EXT) === false && glob('../'.$CNK_VER_OUTPUT_PATH.'forms/*.'.$CNK_VER_EXT) === false && glob('../'.$CNK_VER_OUTPUT_PATH.'css/*.'.$CNK_VER_EXT_CSS) === false))
+	if (gps('do_pull') || (glob('../'.$CNK_VER_OUTPUT_PATH.'pages'.DS.'*.'.$CNK_VER_EXT) === false && glob('../'.$CNK_VER_OUTPUT_PATH.'forms'.DS.'*.'.$CNK_VER_EXT) === false && glob('../'.$CNK_VER_OUTPUT_PATH.'css'.DS.'*.'.$CNK_VER_EXT_CSS) === false))
 	{
 		$error = false;
 		
 		// test if folders exist and have write permissions
-		if (@is_writable('../'.$CNK_VER_OUTPUT_PATH.'forms/') === false)
+		if (@is_writable('..'.DS.$CNK_VER_OUTPUT_PATH.'forms'.DS) === false)
 		{
 			$error = true;
 			echo 'Folder "/forms/" is not writable.<br /><br />';
 		}
 		
-		if (@is_writable('../'.$CNK_VER_OUTPUT_PATH.'pages/') === false)
+		if (@is_writable('..'.DS.$CNK_VER_OUTPUT_PATH.'pages'.DS) === false)
 		{
 			$error = true;
 			echo 'Folder "/pages/" is not writable.<br /><br />';
 		}
 		
-		if (@is_writable('../'.$CNK_VER_OUTPUT_PATH.'css/') === false)
+		if (@is_writable('..'.DS.$CNK_VER_OUTPUT_PATH.'css'.DS) === false)
 		{
 			$error = true;
 			echo 'Folder "/css/" is not writable.';
@@ -367,7 +367,7 @@ function cnk_ver_pull_forms()
 	
 	while ($rs && $r = nextRow($rs))
 	{
-		if (@file_put_contents('../'.$CNK_VER_OUTPUT_PATH.'forms/'.$r['name'].'.'.$r['type'].'.'.$CNK_VER_EXT, $r['form']) === false) return false;
+		if (@file_put_contents('..'.DS.$CNK_VER_OUTPUT_PATH.'forms'.DS.$r['name'].'.'.$r['type'].'.'.$CNK_VER_EXT, $r['form']) === false) return false;
 	}
 	
 	safe_update('txp_form', "file_mod_time = FROM_UNIXTIME('".time()."')", '1=1');
@@ -383,7 +383,7 @@ function cnk_ver_pull_pages()
 	
 	while ($rs && $r = nextRow($rs))
 	{
-		if (@file_put_contents('../'.$CNK_VER_OUTPUT_PATH.'pages/'.$r['name'].'.'.$CNK_VER_EXT, $r['user_html']) === false) return false;
+		if (@file_put_contents('..'.DS.$CNK_VER_OUTPUT_PATH.'pages'.DS.$r['name'].'.'.$CNK_VER_EXT, $r['user_html']) === false) return false;
 	}
 	
 	safe_update('txp_page', "file_mod_time = FROM_UNIXTIME('".time()."')", '1=1');
@@ -399,7 +399,7 @@ function cnk_ver_pull_css()
 	
 	while ($rs && $r = nextRow($rs))
 	{
-		if (@file_put_contents('../'.$CNK_VER_OUTPUT_PATH.'css/'.$r['name'].'.'.$CNK_VER_EXT_CSS, base64_decode($r['css'])) === false) return false;
+		if (@file_put_contents('..'.DS.$CNK_VER_OUTPUT_PATH.'css'.DS.$r['name'].'.'.$CNK_VER_EXT_CSS, base64_decode($r['css'])) === false) return false;
 	}
 	
 	safe_update('txp_css', "file_mod_time = FROM_UNIXTIME('".time()."')", '1=1');
