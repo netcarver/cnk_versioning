@@ -22,16 +22,16 @@ $CNK_VER_EXT_CSS = 'css';
 	DO NOT EDIT BELOW THIS LINE!
 */
 
-$CNK_VER_OUTPUT_PATH = trim($CNK_VER_OUTPUT_PATH, '/').($CNK_VER_OUTPUT_PATH?'/':'');
+$CNK_VER_OUTPUT_PATH = trim($CNK_VER_OUTPUT_PATH, '/' ) . ($CNK_VER_OUTPUT_PATH? '/' : '');
 
 if(@txpinterface == 'admin') 
 {
 	add_privs('cnk_versioning','1,2');
 	register_tab('presentation', 'cnk_versioning', "Versioning");
 	register_callback('cnk_ver_handler', 'cnk_versioning');
-	register_callback('cnk_ver_disable_online_editing', 'page');
-	register_callback('cnk_ver_disable_online_editing', 'form');
-	register_callback('cnk_ver_disable_online_editing', 'css');
+	register_callback('cnk_ver_disable_online_editing', 'page','',1);
+	register_callback('cnk_ver_disable_online_editing', 'form','',1);
+	register_callback('cnk_ver_disable_online_editing', 'css','',1);
 }
 else if (@txpinterface == 'public')
 {
@@ -252,18 +252,15 @@ function cnk_ver_handler($event, $step)
 
 function cnk_ver_disable_online_editing($event, $step)
 {
-	// clear ob
-	ob_end_clean();
-	
-	// return error message
-	
-	pagetop('Versioning');
-	
-	echo '<div style="margin: auto; text-align: center"><ul>';
-	
-	echo 'While cnk_versioning is enabled, this function is disabled.';
-	
+	global $CNK_VER_OUTPUT_PATH;
+	pagetop('Versioning','While cnk_versioning is enabled, '.$event.' editing is disabled.');
+
+	echo '<div style="margin: auto; text-align: center">';
+	echo 'Use an external text editor to change the files in "'.htmlspecialchars($CNK_VER_OUTPUT_PATH).'".';
 	echo '</div>';
+
+	global $event;
+	$event = 'cnk_versioning_blackhole';
 }
 
 function cnk_ver_menu($message = '')
