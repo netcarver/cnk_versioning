@@ -25,10 +25,25 @@ $CNK_VER_EXT_CSS = 'css';
 $CNK_VER_OUTPUT_PATH = trim($CNK_VER_OUTPUT_PATH, DS ) . ($CNK_VER_OUTPUT_PATH ? DS : '');
 
 global $CNK_VER_STRINGS;
-if( !array($CNK_VER_STRINGS))
+if (!is_array($CNK_VER_STRINGS))
 {
 	$CNK_VER_STRINGS = array(
 		'tab_versioning' => 'Versioning',
+		'public_errors' => 'Errors while synchronising database and files',
+		'edit_forbidden' => 'While cnk_versioning is enabled, {type} editing is disabled.',
+		'edit_howto' => 'Use an external text editor to change the files in "{path}".',
+		'write_linktext' => 'Write pages & forms to files',
+		'install' => 'Install',
+		'deinstall' => 'Deinstall',
+		'dir_no_write' => 'Folder {dir} is not writable.',
+		'err_processing' => 'There was an error while processing the {thing}.',
+		'goback' => 'Back to menu&#8230;',
+		'write_ok' => 'The {things} were successfully written to "{dir}".',
+		'tab_writetofiles' => 'Write to files',
+		'success' => 'Success!',
+		'failure' => 'Failure!',
+		'confirm' => 'Yes, I really want to continue',
+		'warning' => 'There are already some files in the pages, forms or css directory, which will be overriden. Do you want to continue?'
 	);
 }
 
@@ -106,7 +121,7 @@ function cnk_ver_textpattern()
 		if ($pages !== false) $error = !cnk_ver_push_pages($pages);
 		if ($css !== false) $error = !cnk_ver_push_css($css);
 		
-		if ($error) echo 'Errors while synchronising database and files';
+		if ($error) echo cnk_ver_gTxt('public_errors');
 	}
 }
 
@@ -304,10 +319,10 @@ function cnk_ver_handler($event, $step)
 function cnk_ver_disable_online_editing($event, $step)
 {
 	global $CNK_VER_OUTPUT_PATH;
-	pagetop('Versioning','While cnk_versioning is enabled, '.$event.' editing is disabled.');
+	pagetop(cnk_ver_gTxt('tab_versioning'), cnk_ver_gTxt('edit_forbidden' , array('{type}'=>$event)) );
 
 	echo '<div style="margin: auto; text-align: center">';
-	echo 'Use an external text editor to change the files in "'.htmlspecialchars($CNK_VER_OUTPUT_PATH).'".';
+	echo cnk_ver_gTxt('edit_howto',array('{path}'=> htmlspecialchars($CNK_VER_OUTPUT_PATH)));
 	echo '</div>';
 
 	global $event;
@@ -316,19 +331,19 @@ function cnk_ver_disable_online_editing($event, $step)
 
 function cnk_ver_menu($message = '')
 {
-	pagetop('Versioning', $message);
+	pagetop(cnk_ver_gTxt('tab_versioning'), $message);
 	
 	echo '<div style="margin: auto; text-align: center"><ul>';
 	
-	echo '<li><a href="?event=cnk_versioning'.a.'step=cnk_ver_pull_all">Write pages & forms to files</a></li>';
+	echo '<li><a href="?event=cnk_versioning'.a.'step=cnk_ver_pull_all">'.cnk_ver_gTxt('write_linktext').'</a></li>';
 	
 	echo '</ul>';
 	
 	echo '<ul style="margin-top: 50px">';	
 	
-	echo '<li><a href="?event=cnk_versioning'.a.'step=cnk_ver_install">Install</a></li>';
+	echo '<li><a href="?event=cnk_versioning'.a.'step=cnk_ver_install">'.cnk_ver_gTxt('install').'</a></li>';
 	
-	echo '<li><a href="?event=cnk_versioning'.a.'step=cnk_ver_deinstall">Deinstall</a></li>';
+	echo '<li><a href="?event=cnk_versioning'.a.'step=cnk_ver_deinstall">'.cnk_ver_gTxt('deinstall').'</a></li>';
 
 	echo '</ul>';
 	
@@ -339,7 +354,7 @@ function cnk_ver_pull_all()
 {
 	global $CNK_VER_OUTPUT_PATH, $CNK_VER_EXT, $CNK_VER_EXT_CSS;
 	
-	pagetop('Write to files', '');
+	pagetop( cnk_ver_gTxt('tab_writetofiles'), '');
 	
 	echo '<div style="margin: auto; text-align: center">';
 				
@@ -351,60 +366,58 @@ function cnk_ver_pull_all()
 		if (@is_writable('..'.DS.$CNK_VER_OUTPUT_PATH.'forms'.DS) === false)
 		{
 			$error = true;
-			echo 'Folder "'.DS.'forms'.DS.'" is not writable.<br /><br />';
+			echo cnk_ver_gTxt( 'dir_no_write' , array( '{path}' => DS.'forms'.DS ) ) . br . br;
 		}
 		
 		if (@is_writable('..'.DS.$CNK_VER_OUTPUT_PATH.'pages'.DS) === false)
 		{
 			$error = true;
-			echo 'Folder "'.DS.'pages'.DS.'" is not writable.<br /><br />';
+			echo cnk_ver_gTxt( 'dir_no_write' , array( '{path}' => DS.'pages'.DS ) ) . br . br;
 		}
 		
 		if (@is_writable('..'.DS.$CNK_VER_OUTPUT_PATH.'css'.DS) === false)
 		{
 			$error = true;
-			echo 'Folder "'.DS.'css'.DS.'" is not writable.';
+			echo cnk_ver_gTxt( 'dir_no_write' , array( '{path}' => DS.'css'.DS ) ) . br . br;
 		}
 		
 		if (!$error)
 		{
 				if (cnk_ver_pull_forms())
 				{
-					echo 'Forms were successfully written to the "'.DS.'forms'.DS.'" directory.<br /><br />';
+					echo cnk_ver_gTxt('write_ok',array('{things}'=>'forms','{dir}'=>DS.'forms'.DS)).br.br;
 				}
 				else
 				{
-					echo 'There was an error while processing forms.<br /><br />';
+					echo cnk_ver_gTxt( 'err_processing' , array( '{thing}' => 'forms' ) ) . br . br;
 				}
 				
 				if (cnk_ver_pull_pages())
 				{
-					echo 'Pages were successfully written to the "'.DS.'pages'.DS.'" directory.<br /><br />';
+					echo cnk_ver_gTxt('write_ok',array('{things}'=>'pages','{dir}'=>DS.'pages'.DS)).br.br;
 				}
 				else
 				{
-					echo 'There was an error while processing pages.<br /><br />';
+					echo cnk_ver_gTxt( 'err_processing' , array( '{thing}' => 'pages' ) ) . br . br;
 				}
 				
 				if (cnk_ver_pull_css())
 				{
-					echo 'Styles were successfully written to the "'.DS.'css'.DS.'" directory.';
+					echo cnk_ver_gTxt('write_ok',array('{things}'=>'styles','{dir}'=>DS.'css'.DS)).br.br;
 				}
 				else
 				{
-					echo 'There was an error while processing css.';
+					echo cnk_ver_gTxt( 'err_processing' , array( '{thing}' => 'css' ) ) . br . br;
 				}
 		}
 		
-		echo '<br /><br /><a href="?event=cnk_versioning">Back to menu...</a>';
+		echo '<br /><br /><a href="?event=cnk_versioning">'.cnk_ver_gTxt('goback').'</a>';
 	}
 	else
 	{
-		echo 'There are already some files in the pages, forms or css directory, which will be overriden. Do you want to continue?<br /><br />'.
-		
-		'<a href="?event=cnk_versioning'.a.'step=cnk_ver_pull_all'.a.'do_pull=1">Yes, overwrite existing files...</a><br /><br />'.
-		
-		'<a href="?event=cnk_versioning">No, bring me back to the menu...</a>';
+		echo cnk_ver_gTxt('warning').br.br.
+		'<a href="?event=cnk_versioning'.a.'step=cnk_ver_pull_all'.a.'do_pull=1">'.cnk_ver_gTxt('confirm').'</a><br /><br />'.		
+		'<a href="?event=cnk_versioning">'.cnk_ver_gTxt('goback').'</a>';
 	}
 	
 	echo '</div>';
@@ -460,17 +473,17 @@ function cnk_ver_pull_css()
 
 function cnk_ver_install()
 {
-	pagetop('Versioning Plugin Installation', '');
+	pagetop(cnk_ver_gTxt('install').'-- cnk_versioning', '');
 	
 	echo '<div style="margin:auto; text-align:center">';
 	
 	if (cnk_ver_do_install())
 	{
-		echo '<p>Installation was successful</p>';
+		echo graf(	cnk_ver_gTxt('success') );
 	}
 	else
 	{
-		echo '<p>Installation aborted</p>';
+		echo graf(	cnk_ver_gTxt('failure') );
 	}
 
 	echo '</div>';
@@ -492,7 +505,7 @@ function cnk_ver_do_install()
 
 function cnk_ver_deinstall()
 {
-	pagetop('Versioning Plugin Deinstallation', '');
+	pagetop(cnk_ver_gTxt('deinstall').'-- cnk_versioning', '');
 	
 	echo '<div style="margin:auto; text-align:center">';
 	
@@ -500,16 +513,16 @@ function cnk_ver_deinstall()
 	{
 		if (cnk_ver_do_deinstall())
 		{
-			echo '<p>Deinstallation was successful</p>';
+			echo graf(	cnk_ver_gTxt('success') );
 		}
 		else
 		{
-			echo '<p>Deinstallation aborted</p>';
+			echo graf(	cnk_ver_gTxt('failure') );
 		}
 	}
 	else
 	{
-		echo '<a href="?event=cnk_versioning'.a.'step=cnk_ver_deinstall'.a.'do_deinstall=1">Yes, I really want to deinstall</a>';
+		echo '<a href="?event=cnk_versioning'.a.'step=cnk_ver_deinstall'.a.'do_deinstall=1">'.cnk_ver_gTxt('confirm').'</a>';
 	}
 	
 	echo '</div>';
