@@ -24,10 +24,61 @@ $CNK_VER_EXT_CSS = 'css';
 
 $CNK_VER_OUTPUT_PATH = trim($CNK_VER_OUTPUT_PATH, DS ) . ($CNK_VER_OUTPUT_PATH ? DS : '');
 
+global $CNK_VER_STRINGS;
+if( !array($CNK_VER_STRINGS))
+{
+	$CNK_VER_STRINGS = array(
+		'tab_versioning' => 'Versioning',
+	);
+}
+
+define( 'CNK_VER_PREFIX' , 'cnk_ver' );
+
+register_callback( 'cnk_ver_enumerate_strings' , 'l10n.enumerate_strings' );
+function cnk_ver_enumerate_strings($event , $step='' , $pre=0)
+{
+	global $CNK_VER_STRINGS;
+	$r = array	(
+				'owner'		=> 'mem_self_register',			#	Change to your plugin's name
+				'prefix'	=> CNK_VER_PREFIX,				#	Its unique string prefix
+				'lang'		=> 'en-gb',						#	The language of the initial strings.
+				'event'		=> 'public',					#	public/admin/common = which interface the strings will be loaded into
+				'strings'	=> $CNK_VER_STRINGS,			#	The strings themselves.
+				);
+	return $r;
+}
+function cnk_ver_gTxt($what,$args = array())
+{
+	global $CNK_VER_STRINGS, $textarray;
+
+	$what = strtolower($what);
+	$key = CNK_VER_PREFIX . '-' . $what;
+
+	if (isset($textarray[$key]))
+	{
+		$str = $textarray[$key];
+	}
+	else
+	{
+		if (isset($CNK_VER_STRINGS[$what]))
+			$str = $CNK_VER_STRINGS[$what];
+		elseif (isset($textarray[$what]))
+			$str = $textarray[$what];
+		else
+			$str = $what;
+	}
+
+	if( !empty($args) )
+		$str = strtr( $str , $args );
+
+	return $str;
+}
+
+
 if(@txpinterface == 'admin') 
 {
 	add_privs('cnk_versioning','1,2');
-	register_tab('presentation', 'cnk_versioning', "Versioning");
+	register_tab('presentation', 'cnk_versioning', cnk_ver_gTxt('tab_versioning'));
 	register_callback('cnk_ver_handler', 'cnk_versioning');
 	register_callback('cnk_ver_disable_online_editing', 'page','',1);
 	register_callback('cnk_ver_disable_online_editing', 'form','',1);
