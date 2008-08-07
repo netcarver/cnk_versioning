@@ -6,7 +6,7 @@ $plugin=array(
 'author'=>'Christian Nowak',
 'author_uri'=>'http://www.cnowak.de',
 'description'=>'Autoload Templates',
-'type'=>'3',
+'type'=>'1',
 );
 
 @include_once('zem_tpl.php');
