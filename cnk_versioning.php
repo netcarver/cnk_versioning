@@ -14,7 +14,7 @@ $plugin=array(
 # --- BEGIN PLUGIN CODE ---
 global $CNK_VER_OUTPUT_PATH, $CNK_VER_EXT, $CNK_VER_EXT_CSS;
 
-$CNK_VER_OUTPUT_PATH = 'textpattern/_templates/versioning/';
+$CNK_VER_OUTPUT_PATH = 'textpattern'.DS.'_templates'.DS.'versioning'.DS;
 $CNK_VER_EXT = 'txp';
 $CNK_VER_EXT_CSS = 'css';
 
@@ -273,7 +273,7 @@ function cnk_ver_menu($message = '')
 	
 	echo '</ul>';
 	
-	echo '<ul style="margin-top: 100px">';	
+	echo '<ul style="margin-top: 50px">';	
 	
 	echo '<li><a href="?event=cnk_versioning'.a.'step=cnk_ver_install">Install</a></li>';
 	
@@ -292,7 +292,7 @@ function cnk_ver_pull_all()
 	
 	echo '<div style="margin: auto; text-align: center">';
 				
-	if (gps('do_pull') || (glob('../'.$CNK_VER_OUTPUT_PATH.'pages'.DS.'*.'.$CNK_VER_EXT) === false && glob('../'.$CNK_VER_OUTPUT_PATH.'forms'.DS.'*.'.$CNK_VER_EXT) === false && glob('../'.$CNK_VER_OUTPUT_PATH.'css'.DS.'*.'.$CNK_VER_EXT_CSS) === false))
+	if (gps('do_pull') || (glob('..'.DS.$CNK_VER_OUTPUT_PATH.'pages'.DS.'*.'.$CNK_VER_EXT) === false && glob('..'.DS.$CNK_VER_OUTPUT_PATH.'forms'.DS.'*.'.$CNK_VER_EXT) === false && glob('..'.DS.$CNK_VER_OUTPUT_PATH.'css'.DS.'*.'.$CNK_VER_EXT_CSS) === false))
 	{
 		$error = false;
 		
@@ -300,26 +300,26 @@ function cnk_ver_pull_all()
 		if (@is_writable('..'.DS.$CNK_VER_OUTPUT_PATH.'forms'.DS) === false)
 		{
 			$error = true;
-			echo 'Folder "/forms/" is not writable.<br /><br />';
+			echo 'Folder "'.DS.'forms'.DS.'" is not writable.<br /><br />';
 		}
 		
 		if (@is_writable('..'.DS.$CNK_VER_OUTPUT_PATH.'pages'.DS) === false)
 		{
 			$error = true;
-			echo 'Folder "/pages/" is not writable.<br /><br />';
+			echo 'Folder "'.DS.'pages'.DS.'" is not writable.<br /><br />';
 		}
 		
 		if (@is_writable('..'.DS.$CNK_VER_OUTPUT_PATH.'css'.DS) === false)
 		{
 			$error = true;
-			echo 'Folder "/css/" is not writable.';
+			echo 'Folder "'.DS.'css'.DS.'" is not writable.';
 		}
 		
 		if (!$error)
 		{
 				if (cnk_ver_pull_forms())
 				{
-					echo 'Forms were successfully written to the "/forms/" directory.<br /><br />';
+					echo 'Forms were successfully written to the "'.DS.'forms'.DS.'" directory.<br /><br />';
 				}
 				else
 				{
@@ -328,7 +328,7 @@ function cnk_ver_pull_all()
 				
 				if (cnk_ver_pull_pages())
 				{
-					echo 'Pages were successfully written to the "/pages/" directory.<br /><br />';
+					echo 'Pages were successfully written to the "'.DS.'pages'.DS.'" directory.<br /><br />';
 				}
 				else
 				{
@@ -337,7 +337,7 @@ function cnk_ver_pull_all()
 				
 				if (cnk_ver_pull_css())
 				{
-					echo 'Styles were successfully written to the "/css/" directory.';
+					echo 'Styles were successfully written to the "'.DS.'css'.DS.'" directory.';
 				}
 				else
 				{
